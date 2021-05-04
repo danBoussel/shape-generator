@@ -1,113 +1,187 @@
 <html>
-  <head>
+
+<head>
     <style>
-      body {
-        font-family: verdana;
-        padding: 1rem;
-      }
-      form {
-        border: solid 1px dodgerBlue;
-        padding: 1rem;
-        display: flex;
-        justify-content: center;
-      }
-      input {
-        height: 3rem;
-      }
-
-      #container {
-        height: 100vh;
-        display: flex;
-        justify-content: space-around;
-        align-items: center;
-        align-content: flex-start;
-        flex-wrap: wrap;
-      }
-
-      #container > div {
-        background-color: tomato;
-        width: 75px;
-        height: 75px;
-        border-radius: 50%;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-      }
-
-      #container > div > span {
-        background-color: cornSilk;
-        padding: 0.5rem;
-        border-radius: 50%;
-      }
-
-      #container > div.blue {
-        background-color: dodgerBlue;
-        transition: background-color 1s;
-      }
+        body {
+            font-family: verdana;
+            padding: 1rem;
+        }
+        
+        form {
+            border: solid 1px dodgerBlue;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+        }
+        
+        input {
+            height: 3rem;
+        }
+        
+        #container {
+            height: 100vh;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            align-content: flex-start;
+            flex-wrap: wrap;
+        }
+        
+        #container>div {
+            background-color: tomato;
+            width: 75px;
+            height: 75px;
+            border-radius: 50%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        #container>div>span {
+            background-color: cornSilk;
+            padding: 0.5rem;
+            border-radius: 50%;
+        }
+        
+        #container>div.blue {
+            background-color: dodgerBlue;
+            transition: background-color 1s;
+        }
+        
+        #container>div.sq {
+            border-radius: 0;
+        }
+        
+        #count {
+            padding: 1rem;
+        }
+        
+        #count>li {
+            padding: 1rem;
+            font-size: 1.5rem;
+            color: blue;
+        }
+        
+        #count>li>span {
+            color: brown;
+            font-size: 2rem;
+        }
     </style>
     <title>Shape Generator</title>
-  </head>
-  <body>
-    <h1><a href='index.html'>Shape Generator</a></h1>
+</head>
+
+<body>
+    <h1><a href='index.html'>Shape Generator</a> </h1>
+
+    <ul id='count'>
+        <li> Number of elements: <span id='NumOfEl'></span></li>
+        <li>Average size of the elements: <span id='avSize'></span></li>
+    </ul>
     <h2>Todos</h2>
     <ul>
-      <li>Create a repo named shape-generator and add this index.html page</li>
-      <li>Currently clicking on the center of a circle causes the center to disappear. This is a bug, the blue circle should disappear.</li>
-      <li>
-        Currently the user can enter anything in the input field. Restrict the input to numbers and limit the values to be greater than 25 and less than 250. 
-      </li>
-      <li>
-        Within the h1 element, display the number of circles which are displayed.
-      </li>
-      <li>
-        Within the h1 element, display the average size of the current circles. 
-      </li>
-      <li>
-        Instead of always generating circles, generate either a circle or a square.
-      </li>
+        <li>Create a repo named shape-generator and add this index.html page</li>
+        <li>Currently clicking on the center of a circle causes the center to disappear. This is a bug, the blue circle should disappear.</li>
+        <li>
+            Currently the user can enter anything in the input field. Restrict the input to numbers and limit the values to be greater than 25 and less than 250.
+        </li>
+        <li>
+            Within the h1 element, display the number of circles which are displayed.
+        </li>
+        <li>
+            Within the h1 element, display the average size of the current circles.
+        </li>
+        <li>
+            Instead of always generating circles, generate either a circle or a square.
+        </li>
     </ul>
     <a href='https://github.com/FullstackAcademy/shape-generator'>Repo</a>
     <form>
-      <input name='px' value='25'/>
+        <input name='px' value='25' />
     </form>
     <div id='container'>
     </div>
     <script>
-      const form = document.querySelector('form');
-      const input = form.querySelector('input');
-      const link = document.querySelector('a');
-      const container = document.querySelector('#container');
+        const form = document.querySelector('form');
+        const input = form.querySelector('input');
+        const link = document.querySelector('a');
+        const container = document.querySelector('#container');
+        const numOfEl = document.querySelector('#numOfEl')
+        const avSize = document.querySelector('#avSize')
+            //====varibles to track  elements total value and elements average size =>
+        let totalPxValue = 0;
+        let totalElements = 0;
+        //==== code to delete elements  and decrease tatalElements with averageSize
+        container.addEventListener('click', (ev) => {
+            //if clicked on <span> delete parentNode(circle or square div) 
+            if (!ev.target.id && ev.target.tagName === 'SPAN') {
+                ev.target.parentNode.remove();
+                //decrease elements and average size
+                totalElements -= 1
+                numOfEl.innerHTML = totalElements
+                totalPxValue -= ev.target.innerHTML * 1
+                avSize.innerHTML = Math.round(totalPxValue / totalElements)
+                    //in case avSize.innerHtml===0 / totalElements => NaN
+                    //assign avSize.innerHTML = 0
+                isNaN(avSize.innerHTML) ? avSize.innerHTML = 0 : avSize.innerHTML
+            }
+            //if clicked on <div>(circle or square div). delete itself - ev.target.parentNode.removeChild(ev.target)
+            if (!ev.target.id && ev.target.tagName === 'DIV') {
+                ev.target.parentNode.removeChild(ev.target);
+                totalElements -= 1
+                numOfEl.innerHTML = totalElements
+                totalPxValue -= ev.target.firstChild.innerHTML * 1
+                avSize.innerHTML = Math.round(totalPxValue / totalElements)
+                isNaN(avSize.innerHTML) ? avSize.innerHTML = 0 : avSize.innerHTML
+            }
 
-      container.addEventListener('click', (ev)=>{
-        if(!ev.target.id){
-          ev.target.parentNode.removeChild(ev.target);
-        }
-      });
+        });
 
-      const generateCircle = ()=> {
-        const size = `${input.value}px`;
-        const circle = document.createElement('div');
-        circle.style.width = size;
-        circle.style.height = size;
-        container.appendChild(circle);
-        const span = document.createElement('span');
-        span.innerText = input.value;
-        circle.appendChild(span);
-        input.value = 25 + Math.floor(Math.random()*50);
-        window.setTimeout(function(){
-          circle.classList.add('blue');
-        }, 500);
-      };
+        const generateCircle = () => {
+            const size = `${input.value}px`;
+            const value = input.value * 1
+                // Restrict the input to numbers and limit the values
+            if (value > 250 || value < 25 || isNaN(value)) return alert('Numbers only. 25 > Your Number < 250')
 
-      form.addEventListener('submit', (ev)=> {
-        ev.preventDefault();
+            const circle = document.createElement('div');
+            //generate either a circle or a square
+            if (input.value * 1 % 2) {
+                circle.style.width = size;
+                circle.style.height = size;
+            } else {
+                circle.classList.add('sq');
+                circle.style.width = size;
+                circle.style.height = size;
+            }
+
+            const span = document.createElement('span');
+            span.innerText = input.value;
+            circle.appendChild(span);
+            input.value = 25 + Math.floor(Math.random() * 50);
+            container.appendChild(circle);
+
+            //==== count total number of elements and average size of elements
+            //elements total count 
+            totalElements += 1
+            numOfEl.innerHTML = totalElements
+                //elements average size
+            totalPxValue += span.innerHTML * 1
+            avSize.innerHTML = Math.round(totalPxValue / totalElements)
+                //========================================================================
+
+            setTimeout(function() {
+                circle.classList.add('blue');
+            }, 500);
+        };
+
+        form.addEventListener('submit', (ev) => {
+            ev.preventDefault();
+            generateCircle();
+        });
+
         generateCircle();
-      });
-
-      generateCircle();
-      generateCircle();
-      generateCircle();
-
+        generateCircle();
+        generateCircle();
     </script>
-  </body>
+</body>
+
 </html>
